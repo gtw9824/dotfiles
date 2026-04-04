@@ -1,0 +1,75 @@
+#--- Java Configuration ---
+
+# Java Paths
+export JAVA_26_HOME=$(/usr/libexec/java_home -v 26)
+export GRAAL_25_HOME=$(/usr/libexec/java_home -v 25)
+
+# Default Java Config
+export JAVA_HOME=$GRAAL_25_HOME
+
+# PATH
+export PATH=$JAVA_HOME/bin:$PATH
+
+# Quick Switch
+alias java26="export JAVA_HOME=$JAVA_26_HOME; java -version"
+alias javagraal="export JAVA_HOME=$GRAAL_25_HOME; java -version"
+
+# --- End Java Configuration ---
+
+# --- Gradle Config ---
+
+# Gradle Ram Config
+export GRADLE_OPTS="-Dorg.gradle.jvmargs=-Xmx6G -XX:+UseG1GC"
+
+# Add Gradle to PATH
+export PATH=$PATH:$HOME/.gradle/bin
+
+# --- End Gradle Config ---
+
+# --- WORKSTATION ---
+
+work() {
+    local session="master_dev"
+    tmux kill-session -t $session 2>/dev/null
+    tmux new-session -d -s $session
+
+    # Window 0: The Editor
+    tmux rename-window -t $session:0 'Editor'
+    tmux send-keys -t $session:0 "vim ." C-m
+
+    # Window : Infrastructure (Terminal & Logs)
+    tmux new-window -t $session:1 -n 'Terminal'
+    tmux split-window -v -t $session:1
+
+    if [[ -f "build.gradle" ]]; then
+        tmux send-keys -t $session:1.0 "echo 'Java/Minecraft Mode Active'" C-m
+        tmux send-keys -t $session:.1 "tail -f logs/latest.log" C-m
+    fi
+
+    tmux select-window -t $session:0
+    tmux attach-session -t $session
+}
+
+# --- MC Modding ---
+
+# MC Modding Aliases
+alias mcrun="./gradlew runClient"       # Launch the game
+alias mcbuild="./gradlew build"         # Compile mod (.jar)
+alias mcclean="./gradlew clean"         # Reset the build folder
+     # Fix dependency issues
+alias mcrefresh="./gradlew clean build --refresh-dependencies genSources"
+
+# Dependency Tree
+alias mctree="./gradlew dependencies --configuration compileClasspath"
+
+# --- End MC Modding ---
+
+# Make NeoVIM main editor
+alias vim='nvim'
+alias vi='nvim'
+alias v='nvim'
+alias oldvim='/usr/bin/vim'
+export EDITOR='nvim'
+export VISUAL='nvim'
+export PATH="/opt/homebrew/bin:$PATH"
+export PATH="$PATH:$HOME/Library/Python/3.9/bin"

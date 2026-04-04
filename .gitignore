@@ -1,0 +1,12 @@
+# Secrets
+local_secrets.lua
+.env
+*.secret
+lazy-lock.json
+
+#macOS Junk
+.DS_Store
+
+#NeoVIM
+*.swp
+undo/
